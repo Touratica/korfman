@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,140 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model AnalysisParameterGroups {
+  id                  Int                   @id @default(autoincrement()) @db.SmallInt
+  name                String                @db.VarChar(32)
+  analysisParameters  AnalysisParameters[]
+}
+
+model AnalysisParameters {
+  id                        Int                     @db.SmallInt
+  groupId                   Int                     @db.SmallInt
+  name                      String                  @db.VarChar(32)
+  analysisParameterGroups   AnalysisParameterGroups @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  matchEvents               MatchEvents[]
+  matchStatisticsSum        MatchStatisticsSum[]
+
+  @@id([id, groupId])
+}
+
+model Clubs {
+  initials String  @id @db.VarChar(8)
+  name     String  @unique @db.VarChar(64)
+  teams    Teams[]
+}
+
+model Competitions {
+  season  String    @db.VarChar(7)
+  name    String    @db.VarChar(32)
+  matches Matches[]
+
+  @@id([season, name])
+}
+
+model FpcMembers {
+  fpcId     Int      @id
+  firstName String   @db.VarChar(24)
+  lastName  String   @db.VarChar(48)
+  birthDate DateTime @db.Date
+  mobile    String   @db.VarChar(14)
+  email     String   @db.VarChar(320)
+  members   Members?
+  players   Players?
+}
+
+model MatchEvents {
+  date                                                           DateTime            @db.Date
+  matchId                                                        Int
+  fpcId                                                          Int
+  opponentId                                                     Int
+  analysisParameterGroup                                         Int                 @db.SmallInt
+  analysisParameterId                                            Int                 @db.SmallInt
+  value                                                          Int                 @db.SmallInt
+  analysisParameters                                             AnalysisParameters  @relation(fields: [analysisParameterGroup, analysisParameterId], references: [groupId, id], onDelete: NoAction, onUpdate: NoAction)
+  match_players_match_events_match_id_fpc_idTomatch_players      MatchPlayers        @relation("match_events_match_id_fpc_idTomatch_players", fields: [matchId, fpcId], references: [matchId, fpcId], onDelete: NoAction, onUpdate: NoAction)
+  match_players_match_events_match_id_opponent_idTomatch_players MatchPlayers        @relation("match_events_match_id_opponent_idTomatch_players", fields: [matchId, opponentId], references: [matchId, fpcId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([date, matchId])
+}
+
+model MatchPlayers {
+  matchId                                                       Int
+  fpcId                                                         Int
+  clubInitials                                                  String                @db.VarChar(8)
+  teamDesignation                                               String                @db.Char(1)
+  teams                                                         Teams                 @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  players                                                       Players               @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
+  matches                                                       Matches               @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction)
+  match_events_match_events_match_id_fpc_idTomatch_players      MatchEvents[]         @relation("match_events_match_id_fpc_idTomatch_players")
+  match_events_match_events_match_id_opponent_idTomatch_players MatchEvents[]         @relation("match_events_match_id_opponent_idTomatch_players")
+  match_statistics_sum                                          MatchStatisticsSum[]
+
+  @@id([matchId, fpcId])
+}
+
+model MatchStatisticsSum {
+  fpcId                   Int
+  matchId                 Int
+  analysisParameterGroup  Int                 @db.SmallInt
+  analysisParameterId     Int                 @db.SmallInt
+  value                   Int                 @db.SmallInt
+  analysisParameters      AnalysisParameters  @relation(fields: [analysisParameterGroup, analysisParameterId], references: [groupId, id], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers            MatchPlayers        @relation(fields: [fpcId, matchId], references: [fpcId, matchId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([fpcId, matchId, analysisParameterGroup, analysisParameterId])
+}
+
+model Matches {
+  matchId                                                            Int             @id @default(autoincrement())
+  season                                                             String          @db.VarChar(7)
+  competition                                                        String          @db.VarChar(32)
+  homeTeamClubInitials                                               String          @db.VarChar(8)
+  homeTeamDesignation                                                String          @db.Char(1)
+  awayTeamClubInitials                                               String          @db.VarChar(8)
+  awayTeamDesignation                                                String          @db.Char(1)
+  date                                                               DateTime        @db.Date
+  teams_matches_away_team_club_initials_away_team_designationToteams Teams           @relation("matches_away_team_club_initials_away_team_designationToteams", fields: [awayTeamClubInitials, awayTeamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  teams_matches_home_team_club_initials_home_team_designationToteams Teams           @relation("matches_home_team_club_initials_home_team_designationToteams", fields: [homeTeamClubInitials, homeTeamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  competitions                                                       Competitions    @relation(fields: [season, competition], references: [season, name], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers                                                       MatchPlayers[]
+}
+
+model Members {
+  memberId    Int         @id @default(autoincrement())
+  fpcId       Int         @unique
+  firstName   String      @db.VarChar(24)
+  lastName    String      @db.VarChar(48)
+  birthDate   DateTime    @db.Date
+  mobile      String      @db.VarChar(14)
+  email       String      @db.VarChar(320)
+  isPermanent Boolean     @default(false)
+  duesInDay   Boolean     @default(false)
+  fpcMembers  FpcMembers  @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Players {
+  fpcId           Int             @id
+  clubInitials    String          @db.VarChar(8)
+  teamDesignation String          @db.Char(1)
+  shirtNumber     Int             @db.SmallInt
+  teams           Teams           @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  fpcMembers      FpcMembers      @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers    MatchPlayers[]
+
+  @@unique([clubInitials, teamDesignation, shirtNumber])
+}
+
+model Teams {
+  designation                                                          String          @db.Char(1)
+  clubInitials                                                         String          @db.VarChar(8)
+  clubs                                                                Clubs           @relation(fields: [clubInitials], references: [initials], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers                                                         MatchPlayers[]
+  matches_matches_away_team_club_initials_away_team_designationToteams Matches[]       @relation("matches_away_team_club_initials_away_team_designationToteams")
+  matches_matches_home_team_club_initials_home_team_designationToteams Matches[]       @relation("matches_home_team_club_initials_home_team_designationToteams")
+  players                                                              Players[]
+
+  @@id([designation, clubInitials])
 }
