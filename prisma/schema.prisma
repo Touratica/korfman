@@ -7,73 +7,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AnalysisParameterGroups {
-  id                 Int                  @id @default(autoincrement()) @db.SmallInt
-  name               String               @db.VarChar(32)
-  analysisParameters AnalysisParameters[]
+model AnalysisParameterGroup {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  analysisParameters AnalysisParameter[]
 }
 
-model AnalysisParameters {
-  id                      Int                     @db.SmallInt
-  groupId                 Int                     @db.SmallInt
-  name                    String                  @db.VarChar(32)
-  analysisParameterGroups AnalysisParameterGroups @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  matchEvents             MatchEvents[]
+model AnalysisParameter {
+  id                      Int                    @default(autoincrement())
+  groupId                 Int
+  name                    String
+  analysisParameterGroups AnalysisParameterGroup @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  matchEvents             MatchEvent[]
   matchStatisticsSum      MatchStatisticsSum[]
 
   @@id([id, groupId])
 }
 
-model Clubs {
-  initials String  @id @db.VarChar(8)
-  name     String  @unique @db.VarChar(64)
-  teams    Teams[]
+model Club {
+  initials String @id
+  name     String @unique
+  teams    Team[]
 }
 
-model Competitions {
-  season  String    @db.VarChar(7)
-  name    String    @db.VarChar(32)
-  matches Matches[]
+model Competition {
+  season  String
+  name    String
+  matches Match[]
 
   @@id([season, name])
 }
 
-model FpcMembers {
+model FpcMember {
   fpcId     Int      @id
-  firstName String   @db.VarChar(24)
-  lastName  String   @db.VarChar(48)
-  birthDate DateTime @db.Date
-  mobile    String   @db.VarChar(14)
-  email     String   @db.VarChar(320)
-  members   Members?
-  players   Players?
+  firstName String
+  lastName  String
+  birthDate DateTime
+  mobile    String
+  email     String
+  members   Member?
+  players   Player?
 }
 
-model MatchEvents {
-  date                                                           DateTime           @db.Date
+model MatchEvent {
+  date                                                           DateTime
   matchId                                                        Int
   fpcId                                                          Int
   opponentId                                                     Int
-  analysisParameterGroup                                         Int                @db.SmallInt
-  analysisParameterId                                            Int                @db.SmallInt
-  value                                                          Int                @db.SmallInt
-  analysisParameters                                             AnalysisParameters @relation(fields: [analysisParameterGroup, analysisParameterId], references: [groupId, id], onDelete: NoAction, onUpdate: NoAction)
-  match_players_match_events_match_id_fpc_idTomatch_players      MatchPlayers       @relation("match_events_match_id_fpc_idTomatch_players", fields: [matchId, fpcId], references: [matchId, fpcId], onDelete: NoAction, onUpdate: NoAction)
-  match_players_match_events_match_id_opponent_idTomatch_players MatchPlayers       @relation("match_events_match_id_opponent_idTomatch_players", fields: [matchId, opponentId], references: [matchId, fpcId], onDelete: NoAction, onUpdate: NoAction)
+  analysisParameterGroup                                         Int
+  analysisParameterId                                            Int
+  value                                                          Int
+  analysisParameters                                             AnalysisParameter @relation(fields: [analysisParameterGroup, analysisParameterId], references: [groupId, id], onDelete: NoAction, onUpdate: NoAction)
+  match_players_match_events_match_id_fpc_idTomatch_players      MatchPlayer       @relation("match_events_match_id_fpc_idTomatch_players", fields: [matchId, fpcId], references: [matchId, fpcId], onDelete: NoAction, onUpdate: NoAction)
+  match_players_match_events_match_id_opponent_idTomatch_players MatchPlayer       @relation("match_events_match_id_opponent_idTomatch_players", fields: [matchId, opponentId], references: [matchId, fpcId], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([date, matchId])
 }
 
-model MatchPlayers {
+model MatchPlayer {
   matchId                                                       Int
   fpcId                                                         Int
-  clubInitials                                                  String               @db.VarChar(8)
-  teamDesignation                                               String               @db.Char(1)
-  teams                                                         Teams                @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
-  players                                                       Players              @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
-  matches                                                       Matches              @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction)
-  match_events_match_events_match_id_fpc_idTomatch_players      MatchEvents[]        @relation("match_events_match_id_fpc_idTomatch_players")
-  match_events_match_events_match_id_opponent_idTomatch_players MatchEvents[]        @relation("match_events_match_id_opponent_idTomatch_players")
+  clubInitials                                                  String
+  teamDesignation                                               String
+  teams                                                         Team                 @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  players                                                       Player               @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
+  matches                                                       Match                @relation(fields: [matchId], references: [matchId], onDelete: NoAction, onUpdate: NoAction)
+  match_events_match_events_match_id_fpc_idTomatch_players      MatchEvent[]         @relation("match_events_match_id_fpc_idTomatch_players")
+  match_events_match_events_match_id_opponent_idTomatch_players MatchEvent[]         @relation("match_events_match_id_opponent_idTomatch_players")
   match_statistics_sum                                          MatchStatisticsSum[]
 
   @@id([matchId, fpcId])
@@ -82,74 +82,74 @@ model MatchPlayers {
 model MatchStatisticsSum {
   fpcId                  Int
   matchId                Int
-  analysisParameterGroup Int                @db.SmallInt
-  analysisParameterId    Int                @db.SmallInt
-  value                  Int                @db.SmallInt
-  analysisParameters     AnalysisParameters @relation(fields: [analysisParameterGroup, analysisParameterId], references: [groupId, id], onDelete: NoAction, onUpdate: NoAction)
-  matchPlayers           MatchPlayers       @relation(fields: [fpcId, matchId], references: [fpcId, matchId], onDelete: NoAction, onUpdate: NoAction)
+  analysisParameterGroup Int
+  analysisParameterId    Int
+  value                  Int
+  analysisParameters     AnalysisParameter @relation(fields: [analysisParameterGroup, analysisParameterId], references: [groupId, id], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers           MatchPlayer       @relation(fields: [fpcId, matchId], references: [fpcId, matchId], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([fpcId, matchId, analysisParameterGroup, analysisParameterId])
 }
 
-model Matches {
-  matchId                                                            Int            @id @default(autoincrement())
-  season                                                             String         @db.VarChar(7)
-  competition                                                        String         @db.VarChar(32)
-  homeTeamClubInitials                                               String         @db.VarChar(8)
-  homeTeamDesignation                                                String         @db.Char(1)
-  awayTeamClubInitials                                               String         @db.VarChar(8)
-  awayTeamDesignation                                                String         @db.Char(1)
-  date                                                               DateTime       @db.Date
-  teams_matches_away_team_club_initials_away_team_designationToteams Teams          @relation("matches_away_team_club_initials_away_team_designationToteams", fields: [awayTeamClubInitials, awayTeamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
-  teams_matches_home_team_club_initials_home_team_designationToteams Teams          @relation("matches_home_team_club_initials_home_team_designationToteams", fields: [homeTeamClubInitials, homeTeamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
-  competitions                                                       Competitions   @relation(fields: [season, competition], references: [season, name], onDelete: NoAction, onUpdate: NoAction)
-  matchPlayers                                                       MatchPlayers[]
+model Match {
+  matchId                                                            Int           @id @default(autoincrement())
+  season                                                             String
+  competition                                                        String
+  homeTeamClubInitials                                               String
+  homeTeamDesignation                                                String
+  awayTeamClubInitials                                               String
+  awayTeamDesignation                                                String
+  date                                                               DateTime
+  teams_matches_away_team_club_initials_away_team_designationToteams Team          @relation("matches_away_team_club_initials_away_team_designationToteams", fields: [awayTeamClubInitials, awayTeamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  teams_matches_home_team_club_initials_home_team_designationToteams Team          @relation("matches_home_team_club_initials_home_team_designationToteams", fields: [homeTeamClubInitials, homeTeamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  competitions                                                       Competition   @relation(fields: [season, competition], references: [season, name], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers                                                       MatchPlayer[]
 }
 
-model Members {
-  memberId    Int        @id @default(autoincrement())
-  fpcId       Int        @unique
-  firstName   String     @db.VarChar(24)
-  lastName    String     @db.VarChar(48)
-  birthDate   DateTime   @db.Date
-  mobile      String     @db.VarChar(14)
-  email       String     @db.VarChar(320)
-  isPermanent Boolean    @default(false)
-  duesInDay   Boolean    @default(false)
-  fpcMembers  FpcMembers @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
-  Payments    Payments[]
+model Member {
+  memberId    Int       @id @default(autoincrement())
+  fpcId       Int       @unique
+  firstName   String
+  lastName    String
+  birthDate   DateTime
+  mobile      String
+  email       String
+  isPermanent Boolean   @default(false)
+  duesInDay   Boolean   @default(false)
+  fpcMembers  FpcMember @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
+  Payments    Payment[]
 }
 
-model Payments {
+model Payment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   dueIn     DateTime @default(now())
-  memberId  Int
+  memberId  Int?
   value     Float
   isPending Boolean  @default(true)
-  members   Members  @relation(fields: [memberId], references: [memberId], onDelete: SetNull, onUpdate: Cascade)
+  members   Member?  @relation(fields: [memberId], references: [memberId], onDelete: SetNull, onUpdate: Cascade)
 }
 
-model Players {
-  fpcId           Int            @id
-  clubInitials    String         @db.VarChar(8)
-  teamDesignation String         @db.Char(1)
-  shirtNumber     Int            @db.SmallInt
-  teams           Teams          @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
-  fpcMembers      FpcMembers     @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: Cascade)
-  matchPlayers    MatchPlayers[]
+model Player {
+  fpcId           Int           @id
+  clubInitials    String
+  teamDesignation String
+  shirtNumber     Int
+  teams           Team          @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
+  fpcMembers      FpcMember     @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: Cascade)
+  matchPlayers    MatchPlayer[]
 
   @@unique([clubInitials, teamDesignation, shirtNumber])
 }
 
-model Teams {
-  designation                                                          String         @db.Char(1)
-  clubInitials                                                         String         @db.VarChar(8)
-  clubs                                                                Clubs          @relation(fields: [clubInitials], references: [initials], onDelete: NoAction, onUpdate: NoAction)
-  matchPlayers                                                         MatchPlayers[]
-  matches_matches_away_team_club_initials_away_team_designationToteams Matches[]      @relation("matches_away_team_club_initials_away_team_designationToteams")
-  matches_matches_home_team_club_initials_home_team_designationToteams Matches[]      @relation("matches_home_team_club_initials_home_team_designationToteams")
-  players                                                              Players[]
+model Team {
+  designation                                                          String
+  clubInitials                                                         String
+  clubs                                                                Club          @relation(fields: [clubInitials], references: [initials], onDelete: NoAction, onUpdate: NoAction)
+  matchPlayers                                                         MatchPlayer[]
+  matches_matches_away_team_club_initials_away_team_designationToteams Match[]       @relation("matches_away_team_club_initials_away_team_designationToteams")
+  matches_matches_home_team_club_initials_home_team_designationToteams Match[]       @relation("matches_home_team_club_initials_home_team_designationToteams")
+  players                                                              Player[]
 
   @@id([designation, clubInitials])
 }

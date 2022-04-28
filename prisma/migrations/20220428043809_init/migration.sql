@@ -1,32 +1,32 @@
 -- CreateTable
 CREATE TABLE "AnalysisParameterGroups" (
-    "id" SMALLSERIAL NOT NULL,
-    "name" VARCHAR(32) NOT NULL,
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "AnalysisParameterGroups_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "AnalysisParameters" (
-    "id" SMALLINT NOT NULL,
-    "groupId" SMALLINT NOT NULL,
-    "name" VARCHAR(32) NOT NULL,
+    "id" INTEGER NOT NULL,
+    "groupId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "AnalysisParameters_pkey" PRIMARY KEY ("id","groupId")
 );
 
 -- CreateTable
 CREATE TABLE "Clubs" (
-    "initials" VARCHAR(8) NOT NULL,
-    "name" VARCHAR(64) NOT NULL,
+    "initials" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "Clubs_pkey" PRIMARY KEY ("initials")
 );
 
 -- CreateTable
 CREATE TABLE "Competitions" (
-    "season" VARCHAR(7) NOT NULL,
-    "name" VARCHAR(32) NOT NULL,
+    "season" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "Competitions_pkey" PRIMARY KEY ("season","name")
 );
@@ -34,24 +34,24 @@ CREATE TABLE "Competitions" (
 -- CreateTable
 CREATE TABLE "FpcMembers" (
     "fpcId" INTEGER NOT NULL,
-    "firstName" VARCHAR(24) NOT NULL,
-    "lastName" VARCHAR(48) NOT NULL,
-    "birthDate" DATE NOT NULL,
-    "mobile" VARCHAR(14) NOT NULL,
-    "email" VARCHAR(320) NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "birthDate" TIMESTAMP(3) NOT NULL,
+    "mobile" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
 
     CONSTRAINT "FpcMembers_pkey" PRIMARY KEY ("fpcId")
 );
 
 -- CreateTable
 CREATE TABLE "MatchEvents" (
-    "date" DATE NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
     "matchId" INTEGER NOT NULL,
     "fpcId" INTEGER NOT NULL,
     "opponentId" INTEGER NOT NULL,
-    "analysisParameterGroup" SMALLINT NOT NULL,
-    "analysisParameterId" SMALLINT NOT NULL,
-    "value" SMALLINT NOT NULL,
+    "analysisParameterGroup" INTEGER NOT NULL,
+    "analysisParameterId" INTEGER NOT NULL,
+    "value" INTEGER NOT NULL,
 
     CONSTRAINT "MatchEvents_pkey" PRIMARY KEY ("date","matchId")
 );
@@ -60,8 +60,8 @@ CREATE TABLE "MatchEvents" (
 CREATE TABLE "MatchPlayers" (
     "matchId" INTEGER NOT NULL,
     "fpcId" INTEGER NOT NULL,
-    "clubInitials" VARCHAR(8) NOT NULL,
-    "teamDesignation" CHAR(1) NOT NULL,
+    "clubInitials" TEXT NOT NULL,
+    "teamDesignation" TEXT NOT NULL,
 
     CONSTRAINT "MatchPlayers_pkey" PRIMARY KEY ("matchId","fpcId")
 );
@@ -70,9 +70,9 @@ CREATE TABLE "MatchPlayers" (
 CREATE TABLE "MatchStatisticsSum" (
     "fpcId" INTEGER NOT NULL,
     "matchId" INTEGER NOT NULL,
-    "analysisParameterGroup" SMALLINT NOT NULL,
-    "analysisParameterId" SMALLINT NOT NULL,
-    "value" SMALLINT NOT NULL,
+    "analysisParameterGroup" INTEGER NOT NULL,
+    "analysisParameterId" INTEGER NOT NULL,
+    "value" INTEGER NOT NULL,
 
     CONSTRAINT "MatchStatisticsSum_pkey" PRIMARY KEY ("fpcId","matchId","analysisParameterGroup","analysisParameterId")
 );
@@ -80,13 +80,13 @@ CREATE TABLE "MatchStatisticsSum" (
 -- CreateTable
 CREATE TABLE "Matches" (
     "matchId" SERIAL NOT NULL,
-    "season" VARCHAR(7) NOT NULL,
-    "competition" VARCHAR(32) NOT NULL,
-    "homeTeamClubInitials" VARCHAR(8) NOT NULL,
-    "homeTeamDesignation" CHAR(1) NOT NULL,
-    "awayTeamClubInitials" VARCHAR(8) NOT NULL,
-    "awayTeamDesignation" CHAR(1) NOT NULL,
-    "date" DATE NOT NULL,
+    "season" TEXT NOT NULL,
+    "competition" TEXT NOT NULL,
+    "homeTeamClubInitials" TEXT NOT NULL,
+    "homeTeamDesignation" TEXT NOT NULL,
+    "awayTeamClubInitials" TEXT NOT NULL,
+    "awayTeamDesignation" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Matches_pkey" PRIMARY KEY ("matchId")
 );
@@ -95,11 +95,11 @@ CREATE TABLE "Matches" (
 CREATE TABLE "Members" (
     "memberId" SERIAL NOT NULL,
     "fpcId" INTEGER NOT NULL,
-    "firstName" VARCHAR(24) NOT NULL,
-    "lastName" VARCHAR(48) NOT NULL,
-    "birthDate" DATE NOT NULL,
-    "mobile" VARCHAR(14) NOT NULL,
-    "email" VARCHAR(320) NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "birthDate" TIMESTAMP(3) NOT NULL,
+    "mobile" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "isPermanent" BOOLEAN NOT NULL DEFAULT false,
     "duesInDay" BOOLEAN NOT NULL DEFAULT false,
 
@@ -107,19 +107,31 @@ CREATE TABLE "Members" (
 );
 
 -- CreateTable
+CREATE TABLE "Payments" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dueIn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "memberId" INTEGER NOT NULL,
+    "value" DOUBLE PRECISION NOT NULL,
+    "isPending" BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT "Payments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Players" (
     "fpcId" INTEGER NOT NULL,
-    "clubInitials" VARCHAR(8) NOT NULL,
-    "teamDesignation" CHAR(1) NOT NULL,
-    "shirtNumber" SMALLINT NOT NULL,
+    "clubInitials" TEXT NOT NULL,
+    "teamDesignation" TEXT NOT NULL,
+    "shirtNumber" INTEGER NOT NULL,
 
     CONSTRAINT "Players_pkey" PRIMARY KEY ("fpcId")
 );
 
 -- CreateTable
 CREATE TABLE "Teams" (
-    "designation" CHAR(1) NOT NULL,
-    "clubInitials" VARCHAR(8) NOT NULL,
+    "designation" TEXT NOT NULL,
+    "clubInitials" TEXT NOT NULL,
 
     CONSTRAINT "Teams_pkey" PRIMARY KEY ("designation","clubInitials")
 );
@@ -173,7 +185,10 @@ ALTER TABLE "Matches" ADD CONSTRAINT "Matches_homeTeamClubInitials_homeTeamDesig
 ALTER TABLE "Members" ADD CONSTRAINT "Members_fpcId_fkey" FOREIGN KEY ("fpcId") REFERENCES "FpcMembers"("fpcId") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "Players" ADD CONSTRAINT "Players_fpcId_fkey" FOREIGN KEY ("fpcId") REFERENCES "FpcMembers"("fpcId") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "Payments" ADD CONSTRAINT "Payments_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Members"("memberId") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Players" ADD CONSTRAINT "Players_fpcId_fkey" FOREIGN KEY ("fpcId") REFERENCES "FpcMembers"("fpcId") ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Players" ADD CONSTRAINT "Players_clubInitials_teamDesignation_fkey" FOREIGN KEY ("clubInitials", "teamDesignation") REFERENCES "Teams"("clubInitials", "designation") ON DELETE NO ACTION ON UPDATE NO ACTION;
