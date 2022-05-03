@@ -13,7 +13,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse) => {
 	await handlePOST(req, res);
 };
 
-async function handlePOST(req: NextApiRequest, res: NextApiResponse<any>) {
+const handlePOST = async (req: NextApiRequest, res: NextApiResponse<any>) => {
 	try {
 		const result = await prisma.payment.create({
 			data: {
@@ -24,6 +24,6 @@ async function handlePOST(req: NextApiRequest, res: NextApiResponse<any>) {
 	} catch (error) {
 		res.status(418).json({ message: `Could not create the payment.` });
 	}
-}
+};
 
 export default handle;
