@@ -3,7 +3,7 @@ import prisma from '../../../lib/prisma';
 import { Prisma } from "@prisma/client";
 
 const handle = async (req:NextApiRequest, res:NextApiResponse<any>) => {
-	const staffId = req.query.memberId;
+	const staffId = req.query.staffId;
 
 	switch (req.method) {
 		case 'GET':
@@ -17,7 +17,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse<any>) => {
 	};
 };
 
-// GET /api/members/:memberId
+// GET /api/staff/:staffId
 const handleGET = async (staffId: string | string[], res: NextApiResponse<any>) => {
 		const member = await prisma.staff.findFirst({
 			where: {
@@ -28,7 +28,7 @@ const handleGET = async (staffId: string | string[], res: NextApiResponse<any>) 
 		else res.status(404).json({ message: `Staff member with id: ${staffId} not found.`});
 };
 
-// DELETE /api/members/:memberId
+// DELETE /api/staff/:staffId
 const handleDELETE = async (staffId: string | string[], res: NextApiResponse<any>) => {
 	try {
 		const member = await prisma.staff.delete({
