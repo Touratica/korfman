@@ -11,6 +11,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse<any>) => {
 	}
 };
 
+// GET /api/fpcMembers/list
 const handleGET = async (res: NextApiResponse<any>) => {
 	try {
 		const result = await prisma.fpcMember.findMany();

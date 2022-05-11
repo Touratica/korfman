@@ -17,7 +17,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse<any>) => {
 	};
 };
 
-// GET /api/members/:memberId
+// GET /api/fpcMembers/:fpcMemberId
 const handleGET = async (fpcMemberId: string | string[], res: NextApiResponse<any>) => {
 		const member = await prisma.member.findFirst({
 			where: {
@@ -28,7 +28,7 @@ const handleGET = async (fpcMemberId: string | string[], res: NextApiResponse<an
 		else res.status(404).json({ message: `FPC member with id: ${fpcMemberId} not found.`});
 };
 
-// DELETE /api/members/:memberId
+// DELETE /api/fpcMembers/:fpcMemberId
 const handleDELETE = async (fpcMemberId: string | string[], res: NextApiResponse<any>) => {
 	try {
 		const member = await prisma.member.delete({
