@@ -11,6 +11,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse<any>) => {
 	}
 };
 
+// POST /api/members/add
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse<any>) => {
 	try {
 		const result = await prisma.member.create({

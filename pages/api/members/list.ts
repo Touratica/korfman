@@ -11,6 +11,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse) => {
 	}
 };
 
+// GET /api/members/list
 const handleGET = async (res: NextApiResponse<any>) => {
 	try {
 		const result = await prisma.member.findMany();
