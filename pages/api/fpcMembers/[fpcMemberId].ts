@@ -2,10 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 import { Prisma } from "@prisma/client";
 
-type Data = {
-	memberId: number
-};
-
 const handle = async (req:NextApiRequest, res:NextApiResponse<any>) => {
 	const fpcMemberId = req.query.fpcMemberId;
 

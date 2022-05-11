@@ -38,6 +38,11 @@ model Competition {
   @@id([season, name])
 }
 
+model Coordenation {
+  staffId Int   @id
+  staff   Staff @relation(fields: [staffId], references: [staffId], onDelete: Cascade, onUpdate: Cascade)
+}
+
 model FpcMember {
   fpcId     Int      @id
   firstName String
@@ -107,17 +112,18 @@ model Match {
 }
 
 model Member {
-  memberId    Int       @id @default(autoincrement())
-  fpcId       Int       @unique
-  firstName   String
-  lastName    String
-  birthDate   DateTime
-  mobile      String
-  email       String
-  isPermanent Boolean   @default(false)
-  duesInDay   Boolean   @default(false)
-  fpcMembers  FpcMember @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
-  Payments    Payment[]
+  memberId   Int       @id @default(autoincrement())
+  fpcId      Int       @unique
+  firstName  String
+  lastName   String
+  birthDate  DateTime
+  mobile     String
+  email      String
+  joinedOn   DateTime  @default(now())
+  duesInDay  Boolean   @default(false)
+  fpcMembers FpcMember @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: NoAction)
+  Payments   Payment[]
+  Staff      Staff?
 }
 
 model Payment {
@@ -140,6 +146,15 @@ model Player {
   matchPlayers    MatchPlayer[]
 
   @@unique([clubInitials, teamDesignation, shirtNumber])
+}
+
+model Staff {
+  staffId      Int           @id @default(autoincrement())
+  memberId     Int?          @unique
+  department   String
+  title        String?
+  member       Member?       @relation(fields: [memberId], references: [memberId], onDelete: NoAction, onUpdate: Cascade)
+  coordenation Coordenation?
 }
 
 model Team {
