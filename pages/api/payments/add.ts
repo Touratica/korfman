@@ -13,6 +13,7 @@ const handle = async (req:NextApiRequest, res:NextApiResponse) => {
 	await handlePOST(req, res);
 };
 
+// POST /api/payments/add
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse<any>) => {
 	try {
 		const result = await prisma.payment.create({
