@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Member" ALTER COLUMN "fpcId" DROP NOT NULL;
