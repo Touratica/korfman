@@ -5,7 +5,7 @@ import {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
 } from "next";
-import { getMembers } from "../api/members/list";
+import { getMembers } from "../api/members";
 import { getMember } from "../api/members/[memberId]";
 
 export const getStaticPaths = async () => {
