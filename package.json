@@ -17,7 +17,7 @@
     "svg": "svgr -d lib/icons public/icons --typescript"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.0.2",
+    "@chakra-ui/react": "^2.1.1",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@prisma/client": "^3.14.0",
