@@ -23,8 +23,7 @@ const handleGET = async (res: NextApiResponse<any>) => {
   }
 };
 
-export const getMembers = async () => {
-  return await prisma.member.findMany();
-};
+export const getMembers = async () =>
+  await prisma.member.findMany({ orderBy: { memberId: "asc" } });
 
 export default handle;
