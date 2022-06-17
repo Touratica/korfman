@@ -5,21 +5,7 @@ import {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
 } from "next";
-import { getMembers } from "../api/members";
 import { getMember } from "../api/members/[memberId]";
-
-export const getStaticPaths = async () => {
-  const data: Member[] = await getMembers();
-
-  const paths = data.map((member) => ({
-    params: { memberId: member.memberId.toString() },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
 
 export const getServerSideProps: GetServerSideProps = async ({
   params,
@@ -28,17 +14,18 @@ export const getServerSideProps: GetServerSideProps = async ({
     const memberId = params?.memberId;
     const data = await getMember(Number(memberId));
 
+    console.log(getMember(Number(memberId)));
     if (!data) return { notFound: true };
 
     return {
-      props: data,
+      props: { member: data },
     };
   } catch (error: any) {
     return { props: { errors: error.message } };
   }
 };
 
-const Member = ({
+const MemberComponent = ({
   member,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -52,4 +39,4 @@ const Member = ({
   );
 };
 
-export default Member;
+export default MemberComponent;
