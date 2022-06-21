@@ -1,14 +1,12 @@
-import { render, screen } from '@testing-library/react'
-import Home from '@/pages/index'
+import { render, screen } from '@testing-library/react';
+import { Welcome } from '../lib/components/Welcome';
 
-describe('Home', () => {
-  it('renders a heading', () => {
-    render(<Home />)
-
-    const heading = screen.getByRole('heading', {
-      name: /welcome to next\.js!/i,
-    })
-
-    expect(heading).toBeInTheDocument()
-  })
-})
+describe('Welcome component', () => {
+  it('has correct Next.js theming section link', () => {
+    render(<Welcome />);
+    expect(screen.getByText('this guide')).toHaveAttribute(
+      'href',
+      'https://mantine.dev/theming/next/'
+    );
+  });
+});

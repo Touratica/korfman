@@ -1,7 +1,7 @@
-import { render } from '@testing-library/react'
-import Home from '@/pages/index'
+import { render } from '@testing-library/react';
+import { Welcome } from '../lib/components/Welcome';
 
 it('renders homepage unchanged', () => {
-  const { container } = render(<Home />)
-  expect(container).toMatchSnapshot()
-})
+  const { container } = render(<Welcome />);
+  expect(container).toMatchSnapshot();
+});

@@ -1,10 +1,6 @@
-import { useRouter } from "next/router";
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-} from "next";
-import { getMember } from "../api/members/[memberId]";
+import { useRouter } from 'next/router';
+import { GetServerSideProps, GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { getMember } from '../api/members/[memberId]';
 
 export const getServerSideProps: GetServerSideProps = async ({
   params,
@@ -23,9 +19,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   }
 };
 
-const MemberComponent = ({
-  member,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const MemberComponent = ({ member }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { memberId } = router.query;
 
