@@ -1,7 +1,7 @@
-import React from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Member } from '@prisma/client';
 import { getMembers } from '../api/members';
+import { SearchableSortableTable } from '../../lib/components/SearchableSortableTable';
 
 const memberType = {
   honorary: 'honorário',
@@ -24,9 +24,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 };
 
-export default function TableScrollArea({
-  members,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Table({ members }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const rows = members.map((member: Member) => (
     <tr
       key={member.memberId}
@@ -45,16 +43,16 @@ export default function TableScrollArea({
   ));
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Nº Sócio</th>
-          <th>Tipo</th>
-          <th>Nome completo</th>
-          <th>DDN</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
+    <>
+      <SearchableSortableTable
+        headers={{
+          memberId: 'Nº Sócio',
+          memberType: 'Tipo',
+          fullName: 'Nome completo',
+          birthDate: 'DDN',
+        }}
+        items={members}
+      ></SearchableSortableTable>
+    </>
   );
 }
