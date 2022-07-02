@@ -20,7 +20,7 @@
     "svg": "svgr -d lib/icons public/icons --typescript"
   },
   "dependencies": {
-    "@next/bundle-analyzer": "^12.1.6",
+    "@next/bundle-analyzer": "^12.2.0",
     "@prisma/client": "^3.15.2",
     "babel-plugin-superjson-next": "^0.4.3",
     "cookies-next": "^2.1.1",
