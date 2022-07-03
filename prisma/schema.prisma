@@ -25,10 +25,11 @@ model AnalysisParameter {
 }
 
 model Coach {
-  fpcId     Int       @id
-  level     Int
-  fpcMember FpcMember @relation(fields: [fpcId], references: [fpcId])
-  Team      Team[]
+  fpcId          Int       @id
+  level          Int
+  fpcMember      FpcMember @relation(fields: [fpcId], references: [fpcId])
+  MainTeams      Team[]    @relation(name: "team_to_main_coach")
+  AssistantTeams Team[]    @relation(name: "team_to_assistant_coach")
 }
 
 model Club {
@@ -172,13 +173,15 @@ model Staff {
 model Team {
   designation                                                          String
   clubInitials                                                         String
-  coachFpcId                                                           Int?
   club                                                                 Club          @relation(fields: [clubInitials], references: [initials], onDelete: NoAction, onUpdate: NoAction)
-  coach                                                                Coach?        @relation(fields: [coachFpcId], references: [fpcId])
   matches_matches_away_team_club_initials_away_team_designationToteams Match[]       @relation("matches_away_team_club_initials_away_team_designationToteams")
   matches_matches_home_team_club_initials_home_team_designationToteams Match[]       @relation("matches_home_team_club_initials_home_team_designationToteams")
   matchPlayers                                                         MatchPlayer[]
   players                                                              Player[]
+  MainCoach                                                            Coach         @relation(name: "team_to_main_coach", fields: [mainCoachFpcId], references: [fpcId])
+  mainCoachFpcId                                                       Int
+  AssistantCoach                                                       Coach?        @relation(name: "team_to_assistant_coach", fields: [assistantCoachFpcId], references: [fpcId])
+  assistantCoachFpcId                                                  Int?
 
   @@id([designation, clubInitials])
 }
