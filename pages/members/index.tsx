@@ -1,13 +1,13 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { Member } from '@prisma/client';
-import { getMembers } from '../api/members';
-import { SearchableSortableTable } from '../../lib/components/SearchableSortableTable';
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { Member } from "@prisma/client";
+import { getMembers } from "../api/members";
+import { SearchableSortableTable } from "../../lib/components/SearchableSortableTable";
 
 const memberType = {
-  honorary: 'honorário',
-  effective: 'efetivo',
-  founder: 'fundador',
-  sympathizer: 'simpatizante',
+  honorary: "honorário",
+  effective: "efetivo",
+  founder: "fundador",
+  sympathizer: "simpatizante",
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -24,21 +24,23 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 };
 
-export default function Table({ members }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Table({
+  members,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const rows = members.map((member: Member) => (
     <tr
       key={member.memberId}
       onClick={() => {
         window.location.href = `members/${member.memberId}`;
       }}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: "pointer" }}
     >
       <td>{member.memberId}</td>
       <td>{memberType[member.type]}</td>
       <td>
         {member.firstName} {member.lastName}
       </td>
-      <td>{member.birthDate.toLocaleDateString('pt-PT')}</td>
+      <td>{member.birthDate.toLocaleDateString("pt-PT")}</td>
     </tr>
   ));
 
@@ -46,10 +48,10 @@ export default function Table({ members }: InferGetServerSidePropsType<typeof ge
     <>
       <SearchableSortableTable
         headers={{
-          memberId: 'Nº Sócio',
-          memberType: 'Tipo',
-          fullName: 'Nome completo',
-          birthDate: 'DDN',
+          memberId: "Nº Sócio",
+          memberType: "Tipo",
+          fullName: "Nome completo",
+          birthDate: "DDN",
         }}
         items={members}
       ></SearchableSortableTable>

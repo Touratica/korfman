@@ -1,1 +1,1 @@
-export { default as SearchableSortableTable } from './SearchableSortableTable';
+export { default as SearchableSortableTable } from "./SearchableSortableTable";

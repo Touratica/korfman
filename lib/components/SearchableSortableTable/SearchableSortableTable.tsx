@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface Header {
   id: string;
@@ -10,7 +10,10 @@ interface TableComponents {
   items: object;
 }
 
-const SearchableSortableTable = ({ headers, items: items }: TableComponents) => {
+const SearchableSortableTable = ({
+  headers,
+  items: items,
+}: TableComponents) => {
   const [sortedField, setSortedField] = useState<string | null>(null);
   return (
     <>
