@@ -8,7 +8,7 @@ export const getMember = async (memberId: number) =>
 // GET /api/members/:memberId
 const handleGET = async (
   memberId: string | string[],
-  res: NextApiResponse<any>
+  res: NextApiResponse<unknown>
 ) => {
   const member = await getMember(Number(memberId));
   if (member) res.status(200).json(member);
@@ -19,7 +19,7 @@ const handleGET = async (
 // DELETE /api/members/:memberId
 const handleDELETE = async (
   memberId: string | string[],
-  res: NextApiResponse<any>
+  res: NextApiResponse<unknown>
 ) => {
   try {
     const member = await prisma.member.delete({
@@ -40,20 +40,22 @@ const handleDELETE = async (
   }
 };
 
-const handle = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const { memberId } = req.query;
 
-  switch (req.method) {
-    case "GET":
-      handleGET(memberId, res);
-      break;
-    case "DELETE":
-      handleDELETE(memberId, res);
-      break;
-    default:
-      throw new Error(
-        `The HTTP ${req.method} method is not supported at this route.`
-      );
+  if (typeof memberId === "string") {
+    switch (req.method) {
+      case "GET":
+        handleGET(memberId, res);
+        break;
+      case "DELETE":
+        handleDELETE(memberId, res);
+        break;
+      default:
+        throw new Error(
+          `The HTTP ${req.method} method is not supported at this route.`
+        );
+    }
   }
 };
 

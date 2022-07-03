@@ -5,7 +5,7 @@ export const getMembers = async () =>
   prisma.member.findMany({ orderBy: { memberId: "asc" } });
 
 // GET /api/members/list
-const handleGET = async (res: NextApiResponse<any>) => {
+const handleGET = async (res: NextApiResponse<unknown>) => {
   try {
     const result = await getMembers();
     res.status(200).json(result);

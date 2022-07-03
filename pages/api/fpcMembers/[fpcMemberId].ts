@@ -5,7 +5,7 @@ import prisma from "../../../lib/prisma";
 // GET /api/fpcMembers/:fpcMemberId
 const handleGET = async (
   fpcMemberId: string | string[],
-  res: NextApiResponse<any>
+  res: NextApiResponse<unknown>
 ) => {
   const member = await prisma.member.findFirst({
     where: {
@@ -22,7 +22,7 @@ const handleGET = async (
 // DELETE /api/fpcMembers/:fpcMemberId
 const handleDELETE = async (
   fpcMemberId: string | string[],
-  res: NextApiResponse<any>
+  res: NextApiResponse<unknown>
 ) => {
   try {
     const member = await prisma.member.delete({
@@ -43,20 +43,22 @@ const handleDELETE = async (
   }
 };
 
-const handle = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const { fpcMemberId } = req.query;
 
-  switch (req.method) {
-    case "GET":
-      await handleGET(fpcMemberId, res);
-      break;
-    case "DELETE":
-      await handleDELETE(fpcMemberId, res);
-      break;
-    default:
-      throw new Error(
-        `The HTTP ${req.method} method is not supported at this route.`
-      );
+  if (typeof fpcMemberId === "string") {
+    switch (req.method) {
+      case "GET":
+        await handleGET(fpcMemberId, res);
+        break;
+      case "DELETE":
+        await handleDELETE(fpcMemberId, res);
+        break;
+      default:
+        throw new Error(
+          `The HTTP ${req.method} method is not supported at this route.`
+        );
+    }
   }
 };
 

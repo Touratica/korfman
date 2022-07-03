@@ -9,18 +9,14 @@ import { getMember } from "../api/members/[memberId]";
 export const getServerSideProps: GetServerSideProps = async ({
   params,
 }: GetServerSidePropsContext) => {
-  try {
-    const memberId = params?.memberId;
-    const data = await getMember(Number(memberId));
+  const memberId = params?.memberId;
+  const data = await getMember(Number(memberId));
 
-    if (!data) return { notFound: true };
+  if (!data) return { notFound: true };
 
-    return {
-      props: { member: data },
-    };
-  } catch (error: any) {
-    return { props: { errors: error.message } };
-  }
+  return {
+    props: { member: data },
+  };
 };
 
 const MemberComponent = ({

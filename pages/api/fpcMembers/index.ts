@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 
 // GET /api/fpcMembers/list
-const handleGET = async (res: NextApiResponse<any>) => {
+const handleGET = async (res: NextApiResponse<unknown>) => {
   try {
     const result = await prisma.fpcMember.findMany();
     res.status(200).json(result);
@@ -13,7 +13,7 @@ const handleGET = async (res: NextApiResponse<any>) => {
   }
 };
 
-const handle = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   switch (req.method) {
     case "GET":
       await handleGET(res);

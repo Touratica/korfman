@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 
 // GET /api/staff/list
-const handleGET = async (res: NextApiResponse<any>) => {
+const handleGET = async (res: NextApiResponse<unknown>) => {
   try {
     const result = await prisma.staff.findMany();
     res.status(200).json(result);

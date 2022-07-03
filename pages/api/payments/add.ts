@@ -2,7 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 
 // POST /api/payments/add
-const handlePOST = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handlePOST = async (
+  req: NextApiRequest,
+  res: NextApiResponse<unknown>
+) => {
   try {
     const result = await prisma.payment.create({
       data: {

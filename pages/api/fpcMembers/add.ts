@@ -3,7 +3,10 @@ import type { FpcMember } from "@prisma/client";
 import prisma from "../../../lib/prisma";
 
 // POST /api/fpcMembers/add
-const handlePOST = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handlePOST = async (
+  req: NextApiRequest,
+  res: NextApiResponse<unknown>
+) => {
   try {
     const fpcMember: FpcMember = JSON.parse(req.body);
 
@@ -16,7 +19,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   }
 };
 
-const handle = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   switch (req.method) {
     case "POST":
       await handlePOST(req, res);

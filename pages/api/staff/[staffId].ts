@@ -5,7 +5,7 @@ import prisma from "../../../lib/prisma";
 // GET /api/staff/:staffId
 const handleGET = async (
   staffId: string | string[],
-  res: NextApiResponse<any>
+  res: NextApiResponse<unknown>
 ) => {
   const member = await prisma.staff.findFirst({
     where: {
@@ -22,7 +22,7 @@ const handleGET = async (
 // DELETE /api/staff/:staffId
 const handleDELETE = async (
   staffId: string | string[],
-  res: NextApiResponse<any>
+  res: NextApiResponse<unknown>
 ) => {
   try {
     const member = await prisma.staff.delete({
@@ -43,20 +43,22 @@ const handleDELETE = async (
   }
 };
 
-const handle = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const { staffId } = req.query;
 
-  switch (req.method) {
-    case "GET":
-      handleGET(staffId, res);
-      break;
-    case "DELETE":
-      handleDELETE(staffId, res);
-      break;
-    default:
-      throw new Error(
-        `The HTTP ${req.method} method is not supported at this route.`
-      );
+  if (typeof staffId === "string") {
+    switch (req.method) {
+      case "GET":
+        handleGET(staffId, res);
+        break;
+      case "DELETE":
+        handleDELETE(staffId, res);
+        break;
+      default:
+        throw new Error(
+          `The HTTP ${req.method} method is not supported at this route.`
+        );
+    }
   }
 };
 

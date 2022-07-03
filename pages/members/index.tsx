@@ -11,17 +11,13 @@ const memberType = {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const data = await getMembers();
+  const data = await getMembers();
 
-    if (!data) return { notFound: true };
+  if (!data) return { notFound: true };
 
-    return {
-      props: { members: data },
-    };
-  } catch (error: any) {
-    return { props: { errors: error.message } };
-  }
+  return {
+    props: { members: data },
+  };
 };
 
 export default function Table({
