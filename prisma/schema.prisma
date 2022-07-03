@@ -47,16 +47,16 @@ model Competition {
 
 model Coordenation {
   staffId Int   @id
-  staff   Staff @relation(fields: [staffId], references: [staffId], onDelete: Cascade, onUpdate: Cascade)
+  staff   Staff @relation(fields: [staffId], references: [staffId], onDelete: Cascade)
 }
 
 model FpcMember {
   fpcId     Int     @id
   firstName String
   lastName  String
+  Coach     Coach?
   member    Member?
   player    Player?
-  Coach     Coach[]
 }
 
 model MatchEvent {
@@ -119,18 +119,18 @@ model Match {
 model Member {
   memberId       Int        @id @default(autoincrement())
   fpcId          Int?       @unique
-  type           MemberType @default(sympathizer)
   firstName      String
   lastName       String
   birthDate      DateTime
   mobile         String
   email          String
-  documentType   String
-  documentNumber String
-  vatId          Int
   joinedOn       DateTime   @default(now())
+  documentNumber String
+  documentType   String
   lastPayment    DateTime   @default(now())
-  fpcMember      FpcMember? @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: Cascade)
+  type           MemberType @default(sympathizer)
+  vatId          Int
+  fpcMember      FpcMember? @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction)
   Payments       Payment[]
   Staff          Staff?
 }
@@ -142,7 +142,7 @@ model Payment {
   memberId  Int
   value     Float
   isPending Boolean  @default(true)
-  member    Member   @relation(fields: [memberId], references: [memberId], onDelete: SetNull, onUpdate: Cascade)
+  member    Member   @relation(fields: [memberId], references: [memberId], onDelete: SetNull)
 }
 
 model Player {
@@ -151,7 +151,7 @@ model Player {
   teamDesignation String
   shirtNumber     Int
   team            Team          @relation(fields: [clubInitials, teamDesignation], references: [clubInitials, designation], onDelete: NoAction, onUpdate: NoAction)
-  fpcMember       FpcMember     @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction, onUpdate: Cascade)
+  fpcMember       FpcMember     @relation(fields: [fpcId], references: [fpcId], onDelete: NoAction)
   matchPlayers    MatchPlayer[]
 
   @@unique([clubInitials, teamDesignation, shirtNumber])
@@ -160,28 +160,26 @@ model Player {
 model Staff {
   staffId      Int           @id @default(autoincrement())
   memberId     Int?          @unique
-  firstName    String
-  lastName     String
   department   Department[]
   title        String[]
+  firstName    String
+  lastName     String
   joinedOn     DateTime      @default(now())
-  member       Member?       @relation(fields: [memberId], references: [memberId], onDelete: NoAction, onUpdate: Cascade)
+  member       Member?       @relation(fields: [memberId], references: [memberId], onDelete: NoAction)
   coordenation Coordenation?
-
-
 }
 
 model Team {
   designation                                                          String
   clubInitials                                                         String
+  coachFpcId                                                           Int?
   club                                                                 Club          @relation(fields: [clubInitials], references: [initials], onDelete: NoAction, onUpdate: NoAction)
-  matchPlayers                                                         MatchPlayer[]
+  coach                                                                Coach?        @relation(fields: [coachFpcId], references: [fpcId])
   matches_matches_away_team_club_initials_away_team_designationToteams Match[]       @relation("matches_away_team_club_initials_away_team_designationToteams")
   matches_matches_home_team_club_initials_home_team_designationToteams Match[]       @relation("matches_home_team_club_initials_home_team_designationToteams")
+  matchPlayers                                                         MatchPlayer[]
   players                                                              Player[]
-  coach                                                                Coach?        @relation(fields: [coachFpcId], references: [fpcId])
 
-  coachFpcId Int?
   @@id([designation, clubInitials])
 }
 
@@ -191,10 +189,10 @@ enum Department {
   Competition
   Financial
   IT
-  Legal
   MarketingAndSales
-  Medical
   Resources
+  Legal
+  Medical
 }
 
 enum MemberType {
