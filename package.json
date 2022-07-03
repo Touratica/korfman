@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit",
     "export": "next build && next export",
     "lint": "next lint",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run",
     "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
-    "test": "npm run prettier:check && npm run lint && npm run typecheck",
+    "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run cypress:headless",
     "svg": "svgr -d lib/icons public/icons --typescript"
   },
   "dependencies": {
@@ -39,6 +41,7 @@
     "@typescript-eslint/parser": "^5.30.3",
     "autoprefixer": "^10.4.7",
     "babel-loader": "^8.2.5",
+    "cypress": "^10.3.0",
     "eslint": "8.19.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
