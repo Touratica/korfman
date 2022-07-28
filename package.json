@@ -24,7 +24,7 @@
     ]
   },
   "dependencies": {
-    "@next/bundle-analyzer": "^12.2.0",
+    "@next/bundle-analyzer": "^12.2.3",
     "@prisma/client": "^4.0.0",
     "babel-plugin-superjson-next": "^0.4.3",
     "cookies-next": "^2.1.1",
